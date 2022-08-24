@@ -1,12 +1,20 @@
 <?php
 $conn = new PDO("mysql:host=localhost;dbname=database", $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD']);
 
-$id = preg_replace("[^0-9]", "", $_GET['id']);
+try {
+    $id = preg_replace("[^0-9]", "", $_GET['id']);
 
-$query = $conn->prepare("SELECT * FROM users WHERE id = '$id'");
-$query->execute();
+    $query = $conn->prepare("SELECT * FROM users WHERE id = :id");
+    $query->execute([
+        'id' => $id
+    ]);
 
-$user = $query->fetch(PDO::FETCH_ASSOC);
+    $user = $query->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $error) {
+    echo $error->getMessage();
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
